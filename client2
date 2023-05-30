@@ -1,0 +1,89 @@
+#! /usr/bin/python3
+# client2.py
+
+Description ="""Client tipo B"""
+import logging
+import os
+import struct
+import sys
+import socket
+import argparse
+import threading
+import time
+
+HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
+PORT = 54861  # Port to listen on (non-privileged ports are > 1023)
+Max_sequence_length = 2048
+
+def main(filename, host, port):
+    # Inizializzazione socket client
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        numSequenze = 0
+        # Connessione al server
+        s.connect((host, port))
+        #print("Io", s.getsockname(), "sono connesso a", s.getpeername())
+        data = recv_all(s,1)
+        type = "B"
+        tipo = type.encode()
+        s.sendall(tipo)
+         # Apertura del file
+        try:
+            with open(filename, "r") as file:
+                lines = file.readlines()
+                # Invio delle linee del file al server
+                for line in lines:
+                    line = line.strip()
+                    data = line.encode()
+                    length = len(data)
+                    # Invio lunghezza sequenza
+                    if length > 0 and length <= Max_sequence_length:
+                        s.sendall(struct.pack("!i", length))
+                        s.sendall(data)  
+                        numSequenze += 1  
+                s.sendall(struct.pack("!i", 0))        
+        except OSError as e:
+            print(f"Errore durante l'apertura del file: {filename}")
+        # Invio sequenza di lunghezza 0 per indicare la fine dei dati
+        #s.sendall(b'\x00')
+        # Ricezione del numero di sequenze ricevute dal server
+        data = recv_all(s, 4)
+        sequenze_ricevute = struct.unpack("!i", data)[0]
+        #print(f"Sequenze ricevute dal server da parte del client:{sequenze_ricevute}")
+        if numSequenze != sequenze_ricevute:
+            print(f"Errore. Sequenze ricevute diverse da quelle inviate")
+
+    
+
+def recv_all(conn, n):
+    chunks = b""
+    bytes_recd = 0
+    
+    while bytes_recd < n:
+        chunk = conn.recv(min(n - bytes_recd, 1024))
+        
+        if len(chunk) == 0:
+            raise RuntimeError("Connessione interrotta")
+        
+        chunks += chunk
+        bytes_recd += len(chunk)
+    
+    return chunks
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Client che invia file al server", formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument("files", help="Nome dei file di testo da inviare al server", nargs="+")
+    parser.add_argument('--host', default=HOST, help='Indirizzo host del server')
+    parser.add_argument('--port', type=int, default=PORT, help='Porta del server')
+    args = parser.parse_args()
+    threads = []
+    for filename in args.files:
+        t = threading.Thread(target=main, args=(filename, args.host, args.port))
+        t.start()
+        threads.append(t)
+        time.sleep(0.5)
+
+    # Attendi la terminazione di tutti i thread
+    for thread in threads:
+        thread.join()
+
