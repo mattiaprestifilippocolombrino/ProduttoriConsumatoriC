@@ -202,5 +202,3 @@ if __name__ == '__main__':
     process = subprocess.Popen(command)
     # faccio partire server.py
     main(args.max_threads, args.host, args.port, process)
-
-
