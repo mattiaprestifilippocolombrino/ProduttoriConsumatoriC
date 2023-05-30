@@ -284,7 +284,7 @@ void *capoScrittoreBody(void *v)
 {
     capoScrittoriDati *paramsCapo = (capoScrittoriDati *)v;
     // apro la pipe caposc in lettura
-    int fd = open("/tmp/caposc", O_RDONLY);
+    int fd = open("/tmp/caposcPrestifilippo", O_RDONLY);
     if (fd == -1)
     {
         termina("Errore nell'apertura della FIFO C");
@@ -344,7 +344,7 @@ void *capoLettoreBody(void *v)
 {
     capoLettoriDati *paramsCapo = (capoLettoriDati *)v;
     // apro la pipe capolet in lettura
-    int fd = open("/tmp/capolet", O_RDONLY);
+    int fd = open("/tmp/capoletPrestifilippo", O_RDONLY);
     if (fd == -1)
     {
         termina("Errore nell'apertura della FIFO C");

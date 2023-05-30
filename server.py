@@ -23,8 +23,8 @@ def main(max_threads, host=HOST, port=PORT, process=None):
     directory_corrente = os.getcwd()
     #print(directory_corrente)
 
-    pathSc="/tmp/caposc"
-    pathLet="/tmp/capolet"
+    pathSc="/tmp/caposcPrestifilippo"
+    pathLet="/tmp/capoletPrestifilippo"
 
     # Creazione della pipe FIFO se non esistono con gestione errori
     if not os.path.exists(pathLet):
