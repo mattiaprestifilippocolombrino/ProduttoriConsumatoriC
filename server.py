@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#! /usr/bin/env python3
 # server che fornisce l'elenco dei primi in un dato intervallo 
 # gestisce più clienti contemporaneamente usando i thread
 # invia il byte inutile all'inizio della connessione
@@ -202,4 +202,5 @@ if __name__ == '__main__':
     process = subprocess.Popen(command)
     # faccio partire server.py
     main(args.max_threads, args.host, args.port, process)
+
 
