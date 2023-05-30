@@ -36,7 +36,8 @@ def main(max_threads, host=HOST, port=PORT, process=None):
             logging.exception(f"Errore durante la creazione della FIFO capolet: {e}")
             sys.exit(1)
     else:
-        logging.exception(f"La pipe esiste già: {pathLet}")
+        os.unlink(pathLet)
+        os.mkfifo(pathLet)
 
     if not os.path.exists(pathSc):
         try:
@@ -47,7 +48,9 @@ def main(max_threads, host=HOST, port=PORT, process=None):
             logging.exception(f"Errore durante la creazione della FIFO capolet: {e}")
             sys.exit(1)
     else:
-        logging.exception(f"La pipe esiste già: {pathSc}")
+        os.unlink(pathSc)
+        s.mkfifo(pathSc)
+
 
     # Apro le fifo
     try:
