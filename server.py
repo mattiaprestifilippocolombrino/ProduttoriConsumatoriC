@@ -49,7 +49,7 @@ def main(max_threads, host=HOST, port=PORT, process=None):
             sys.exit(1)
     else:
         os.unlink(pathSc)
-        s.mkfifo(pathSc)
+        os.mkfifo(pathSc)
 
 
     # Apro le fifo
